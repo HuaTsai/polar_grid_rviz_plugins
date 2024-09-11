@@ -35,13 +35,12 @@ PolarGrid::PolarGrid(Ogre::SceneManager *scene_manager)
 
   // Create concentric circles
   polars_.clear();
-  for (int i = 0; i < 3; ++i) {
+  for (auto radius : {25, 50, 75, 100, 125, 150}) {
     std::shared_ptr<Ogre::ManualObject> obj(
         scene_manager_->createManualObject());
     obj->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_STRIP);
-    float radius = 2 + i * 2;
-    for (int j = 0; j <= 180; ++j) {
-      float angle = Ogre::Math::TWO_PI * j / 180;
+    for (int j = -60; j <= 60; ++j) {
+      float angle = Ogre::Math::PI * j / 180.f;
       float x = radius * Ogre::Math::Cos(angle);
       float y = radius * Ogre::Math::Sin(angle);
       obj->position(x, y, 0);
@@ -50,6 +49,18 @@ PolarGrid::PolarGrid(Ogre::SceneManager *scene_manager)
     scene_node_->attachObject(obj.get());
     polars_.push_back(obj);
   }
+  std::shared_ptr<Ogre::ManualObject> b(scene_manager_->createManualObject());
+  b->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_LIST);
+  for (auto angle : {-60, -40, -20, 0, 20, 40, 60}) {
+    b->position(0, 0, 0);
+    float angle_rad = Ogre::Math::PI * angle / 180.f;
+    float x = 150.f * Ogre::Math::Cos(angle_rad);
+    float y = 150.f * Ogre::Math::Sin(angle_rad);
+    b->position(x, y, 0);
+  }
+  b->end();
+  scene_node_->attachObject(b.get());
+  polars_.push_back(b);
 }
 
 void PolarGrid::setPosition(const Ogre::Vector3 &position) {
