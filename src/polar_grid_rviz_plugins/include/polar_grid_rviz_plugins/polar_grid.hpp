@@ -23,25 +23,33 @@
  */
 #pragma once
 
+#include <OgreMaterial.h>
+
 #include <rviz_rendering/objects/object.hpp>
 
 namespace polar_grid_rviz_plugins {
 
 class PolarGrid : public rviz_rendering::Object {
  public:
-  explicit PolarGrid(Ogre::SceneManager *scene_manager);
+  explicit PolarGrid(Ogre::SceneManager *scene_manager,
+                     Ogre::SceneNode *parent_node);
 
-  void setPosition(const Ogre::Vector3 & position) override;
-  void setOrientation(const Ogre::Quaternion & orientation) override;
-  void setScale(const Ogre::Vector3 & scale) override;
+  void draw();
+  void setPosition(const Ogre::Vector3 &position) override;
+  void setOrientation(const Ogre::Quaternion &orientation) override;
+  void setScale(const Ogre::Vector3 &scale) override;
   void setColor(float r, float g, float b, float a) override;
-  const Ogre::Vector3 & getPosition() override;
-  const Ogre::Quaternion & getOrientation() override;
-  void setUserData(const Ogre::Any & data) override;
+  const Ogre::Vector3 &getPosition() override;
+  const Ogre::Quaternion &getOrientation() override;
+  void setUserData(const Ogre::Any &data) override;
+
+  std::shared_ptr<Ogre::SceneNode> getSceneNode();
 
  private:
   std::shared_ptr<Ogre::SceneNode> scene_node_;
-  std::vector<std::shared_ptr<Ogre::ManualObject>> polars_;
+  std::shared_ptr<Ogre::ManualObject> polar_grid_;
+  Ogre::ColourValue color_;
+  Ogre::MaterialPtr material_;
 };
 
 }  // namespace polar_grid_rviz_plugins

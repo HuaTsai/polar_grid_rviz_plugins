@@ -27,18 +27,23 @@
 #include <rviz_common/display.hpp>
 #include <rviz_common/properties/color_property.hpp>
 #include <rviz_common/properties/float_property.hpp>
-#include <rviz_rendering/objects/shape.hpp>
+#include <rviz_common/properties/tf_frame_property.hpp>
 
 namespace polar_grid_rviz_plugins {
 
 class PolarGridDisplay : public rviz_common::Display {
   Q_OBJECT
+ public:
+  PolarGridDisplay();
+  void onInitialize() override;
+  void update(float dt, float ros_dt) override;
+
  private Q_SLOTS:
   void updateColor();
 
  protected:
-  void onInitialize() override;
-  std::unique_ptr<PolarGrid> polar_grid_shape_;
+  std::unique_ptr<PolarGrid> polar_grid_;
+  std::unique_ptr<rviz_common::properties::TfFrameProperty> frame_property_;
   std::unique_ptr<rviz_common::properties::ColorProperty> color_property_;
   std::unique_ptr<rviz_common::properties::FloatProperty> alpha_property_;
 };
