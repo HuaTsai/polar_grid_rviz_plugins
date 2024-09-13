@@ -43,6 +43,33 @@ PolarGridDisplay::PolarGridDisplay() {
       this, SLOT(updateColor()));
   alpha_property_->setMin(0.f);
   alpha_property_->setMax(1.f);
+
+  min_radius_property_ =
+      std::make_unique<rviz_common::properties::FloatProperty>(
+          "Minimum Radius", 0.0f, "The minimum radius of the polar grid.", this,
+          SLOT(updateMinRadius()));
+  min_radius_property_->setMin(0.f);
+
+  radius_step_property_ =
+      std::make_unique<rviz_common::properties::FloatProperty>(
+          "Radius Step", 1.0f, "The step size for radius increments.", this,
+          SLOT(updateRadiusStep()));
+  radius_step_property_->setMin(0.f);
+
+  circles_count_property_ =
+      std::make_unique<rviz_common::properties::IntProperty>(
+          "Circles Count", 5, "The number of circles to draw.", this,
+          SLOT(updateCirclesCount()));
+  circles_count_property_->setMin(0);
+
+  plane_property_ = std::make_unique<rviz_common::properties::EnumProperty>(
+      "Plane", "XY", "The plane to draw the polar grid along.", this,
+      SLOT(updatePlane()));
+  plane_property_->addOption("XY", static_cast<int>(Plane::kXY));
+  plane_property_->addOption("XZ", static_cast<int>(Plane::kXZ));
+  plane_property_->addOption("YZ", static_cast<int>(Plane::kYZ));
+
+  // TODO: boarder (ang1, ang2), invert, origin offset, show texts and their color/size
 }
 
 void PolarGridDisplay::onInitialize() {
@@ -52,16 +79,17 @@ void PolarGridDisplay::onInitialize() {
 
   polar_grid_ = std::make_unique<PolarGrid>(scene_manager_, scene_node_);
 
-  updateColor();
+  polar_grid_->getSceneNode()->setVisible(false);
 
-  polar_grid_->draw();
+  updateColor();
+  updateMinRadius();
+  updateRadiusStep();
+  updateCirclesCount();
+  updatePlane();
 }
 
-void PolarGridDisplay::update(float dt, float ros_dt) {
-  (void)dt;
-  (void)ros_dt;
-  QString qframe = frame_property_->getFrame();
-  std::string frame = qframe.toStdString();
+void PolarGridDisplay::update(float /* dt */, float /* ros_dt */) {
+  std::string frame = frame_property_->getFrame().toStdString();
 
 #if (defined(ROS_DISTRO_GALACTIC))
   Ogre::Vector3 position;
@@ -75,7 +103,7 @@ void PolarGridDisplay::update(float dt, float ros_dt) {
     setTransformOk();
     polar_grid_->getSceneNode()->setVisible(true);
   } else {
-    setMissingTransformToFixedFrame(qframe.toStdString());
+    setMissingTransformToFixedFrame(frame);
     polar_grid_->getSceneNode()->setVisible(false);
   }
 }
@@ -85,6 +113,35 @@ void PolarGridDisplay::updateColor() {
   color.a = alpha_property_->getFloat();
   polar_grid_->setColor(color.r, color.g, color.b, color.a);
   // context_->queueRender();  // FIXME: check if this is necessary
+}
+
+void PolarGridDisplay::updateMinRadius() {
+  polar_grid_->setMinRadius(min_radius_property_->getFloat());
+}
+
+void PolarGridDisplay::updateRadiusStep() {
+  polar_grid_->setRadiusStep(radius_step_property_->getFloat());
+}
+
+void PolarGridDisplay::updateCirclesCount() {
+  polar_grid_->setCirclesCount(circles_count_property_->getInt());
+}
+
+void PolarGridDisplay::updatePlane() {
+  Ogre::Quaternion q;
+  Plane plane = static_cast<Plane>(plane_property_->getOptionInt());
+  // clang-format off
+  if (plane == Plane::kXY) {
+    q = Ogre::Quaternion(Ogre::Vector3::UNIT_X, Ogre::Vector3::UNIT_Y, Ogre::Vector3::UNIT_Z);
+  } else if (plane == Plane::kXZ) {
+    q = Ogre::Quaternion(Ogre::Vector3::UNIT_X, Ogre::Vector3::UNIT_Z, -Ogre::Vector3::UNIT_Y);
+  } else if (plane == Plane::kYZ) {
+    q = Ogre::Quaternion(Ogre::Vector3::UNIT_Y, Ogre::Vector3::UNIT_Z, Ogre::Vector3::UNIT_X);
+  } else {
+    RVIZ_COMMON_LOG_ERROR_STREAM("Invalid plane index " << plane_property_->getOptionInt());
+  }
+  // clang-format on
+  polar_grid_->getSceneNode()->setOrientation(q);
 }
 
 }  // namespace polar_grid_rviz_plugins

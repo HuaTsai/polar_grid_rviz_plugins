@@ -52,8 +52,10 @@ void PolarGrid::draw() {
   polar_grid_->clear();
   polar_grid_->begin(material_->getName(), Ogre::RenderOperation::OT_LINE_LIST,
                      "rviz_rendering");
-  for (auto radius : {2, 4, 6, 8, 10}) {
-    for (int j = -180; j <= 180; ++j) {
+  for (int i = 0; i < circles_count_; ++i) {
+    float radius =
+        min_radius_ + (i + (min_radius_ < 1e-6 ? 1 : 0)) * radius_step_;
+    for (int j = -180; j <= 150; ++j) {
       for (int k = 0; k < 2; ++k) {
         float angle_rad = Ogre::Math::PI * (j + k) / 180.f;
         float x = radius * Ogre::Math::Cos(angle_rad);
@@ -90,7 +92,7 @@ void PolarGrid::setOrientation(const Ogre::Quaternion &orientation) {
   scene_node_->setOrientation(orientation);
 }
 
-void PolarGrid::setScale(const Ogre::Vector3 &scale) { (void)scale; }
+void PolarGrid::setScale(const Ogre::Vector3 & /* scale */) {}
 
 void PolarGrid::setColor(float r, float g, float b, float a) {
   color_ = Ogre::ColourValue(r, g, b, a);
@@ -106,7 +108,22 @@ const Ogre::Quaternion &PolarGrid::getOrientation() {
   return scene_node_->getOrientation();
 }
 
-void PolarGrid::setUserData(const Ogre::Any &data) { (void)data; }
+void PolarGrid::setUserData(const Ogre::Any & /* data */) {}
+
+void PolarGrid::setMinRadius(float min_radius) {
+  min_radius_ = min_radius;
+  draw();
+}
+
+void PolarGrid::setRadiusStep(float radius_step) {
+  radius_step_ = radius_step;
+  draw();
+}
+
+void PolarGrid::setCirclesCount(int circles_count) {
+  circles_count_ = circles_count;
+  draw();
+}
 
 std::shared_ptr<Ogre::SceneNode> PolarGrid::getSceneNode() {
   return scene_node_;

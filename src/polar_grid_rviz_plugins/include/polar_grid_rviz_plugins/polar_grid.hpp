@@ -37,6 +37,7 @@ class PolarGrid : public rviz_rendering::Object {
                      Ogre::SceneNode *parent_node);
 
   void draw();
+
   void setPosition(const Ogre::Vector3 &position) override;
   void setOrientation(const Ogre::Quaternion &orientation) override;
   void setScale(const Ogre::Vector3 &scale) override;
@@ -45,13 +46,20 @@ class PolarGrid : public rviz_rendering::Object {
   const Ogre::Quaternion &getOrientation() override;
   void setUserData(const Ogre::Any &data) override;
 
+  void setMinRadius(float min_radius);
+  void setRadiusStep(float radius_step);
+  void setCirclesCount(int circles_count);
+
   std::shared_ptr<Ogre::SceneNode> getSceneNode();
 
  private:
+  Ogre::MaterialPtr material_;
   std::shared_ptr<Ogre::SceneNode> scene_node_;
   std::shared_ptr<Ogre::ManualObject> polar_grid_;
   Ogre::ColourValue color_;
-  Ogre::MaterialPtr material_;
+  float min_radius_;
+  float radius_step_;
+  int circles_count_;
 };
 
 }  // namespace polar_grid_rviz_plugins

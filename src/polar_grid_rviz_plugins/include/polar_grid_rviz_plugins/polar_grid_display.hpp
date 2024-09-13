@@ -26,7 +26,9 @@
 #include <polar_grid_rviz_plugins/polar_grid.hpp>
 #include <rviz_common/display.hpp>
 #include <rviz_common/properties/color_property.hpp>
+#include <rviz_common/properties/enum_property.hpp>
 #include <rviz_common/properties/float_property.hpp>
+#include <rviz_common/properties/int_property.hpp>
 #include <rviz_common/properties/tf_frame_property.hpp>
 
 namespace polar_grid_rviz_plugins {
@@ -34,18 +36,31 @@ namespace polar_grid_rviz_plugins {
 class PolarGridDisplay : public rviz_common::Display {
   Q_OBJECT
  public:
+  enum class Plane {
+    kXY,
+    kXZ,
+    kYZ,
+  };
   PolarGridDisplay();
   void onInitialize() override;
   void update(float dt, float ros_dt) override;
 
  private Q_SLOTS:
   void updateColor();
+  void updateMinRadius();
+  void updateRadiusStep();
+  void updateCirclesCount();
+  void updatePlane();
 
  protected:
   std::unique_ptr<PolarGrid> polar_grid_;
   std::unique_ptr<rviz_common::properties::TfFrameProperty> frame_property_;
   std::unique_ptr<rviz_common::properties::ColorProperty> color_property_;
   std::unique_ptr<rviz_common::properties::FloatProperty> alpha_property_;
+  std::unique_ptr<rviz_common::properties::FloatProperty> min_radius_property_;
+  std::unique_ptr<rviz_common::properties::FloatProperty> radius_step_property_;
+  std::unique_ptr<rviz_common::properties::IntProperty> circles_count_property_;
+  std::unique_ptr<rviz_common::properties::EnumProperty> plane_property_;
 };
 
 }  // namespace polar_grid_rviz_plugins
