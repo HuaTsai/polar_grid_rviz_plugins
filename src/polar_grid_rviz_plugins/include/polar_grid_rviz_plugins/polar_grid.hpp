@@ -24,6 +24,8 @@
 #pragma once
 
 #include <OgreMaterial.h>
+#include <OgreSceneManager.h>
+#include <OgreSceneNode.h>
 
 #include <rviz_rendering/objects/object.hpp>
 

@@ -21,16 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include <OgreSceneManager.h>
-#include <OgreSceneNode.h>
-
 #include <polar_grid_rviz_plugins/polar_grid.hpp>
 #include <rviz_common/logging.hpp>
 #include <rviz_rendering/material_manager.hpp>
 
 namespace polar_grid_rviz_plugins {
 
-PolarGrid::PolarGrid(Ogre::SceneManager *scene_manager, Ogre::SceneNode *parent_node)
+PolarGrid::PolarGrid(Ogre::SceneManager *scene_manager,
+                     Ogre::SceneNode *parent_node)
     : rviz_rendering::Object(scene_manager) {
   static int count = 0;
   std::string name = "PolarGrid" + std::to_string(count++);
@@ -42,8 +40,8 @@ PolarGrid::PolarGrid(Ogre::SceneManager *scene_manager, Ogre::SceneNode *parent_
     parent_node = scene_manager->getRootSceneNode();
   }
 
-  scene_node_ = std::shared_ptr<Ogre::SceneNode>(
-      parent_node->createChildSceneNode());
+  scene_node_ =
+      std::shared_ptr<Ogre::SceneNode>(parent_node->createChildSceneNode());
   scene_node_->attachObject(polar_grid_.get());
 
   material_ = rviz_rendering::MaterialManager::createMaterialWithNoLighting(
@@ -110,6 +108,8 @@ const Ogre::Quaternion &PolarGrid::getOrientation() {
 
 void PolarGrid::setUserData(const Ogre::Any &data) { (void)data; }
 
-std::shared_ptr<Ogre::SceneNode> PolarGrid::getSceneNode() { return scene_node_; }
+std::shared_ptr<Ogre::SceneNode> PolarGrid::getSceneNode() {
+  return scene_node_;
+}
 
 }  // namespace polar_grid_rviz_plugins

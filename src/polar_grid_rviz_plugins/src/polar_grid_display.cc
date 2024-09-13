@@ -21,9 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include <polar_grid_rviz_plugins/polar_grid.hpp>
 #include <polar_grid_rviz_plugins/polar_grid_display.hpp>
-#include <rviz_common/display.hpp>
 #include <rviz_common/display_context.hpp>
 #include <rviz_common/logging.hpp>
 #include <rviz_rendering/material_manager.hpp>
