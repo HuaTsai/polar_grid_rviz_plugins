@@ -79,8 +79,6 @@ void PolarGridDisplay::onInitialize() {
 
   polar_grid_ = std::make_unique<PolarGrid>(scene_manager_, scene_node_);
 
-  polar_grid_->getSceneNode()->setVisible(false);
-
   updateColor();
   updateMinRadius();
   updateRadiusStep();
