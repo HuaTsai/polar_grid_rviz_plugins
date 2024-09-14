@@ -47,9 +47,27 @@ PolarGrid::PolarGrid(Ogre::SceneManager *scene_manager, Ogre::SceneNode *parent_
 void PolarGrid::draw() {
   polar_grid_->clear();
   polar_grid_->begin(material_->getName(), Ogre::RenderOperation::OT_LINE_LIST, "rviz_rendering");
+
+  int start_angle = 0, end_angle = 0;
+  if (sectors_) {
+    if (invert_) {
+      start_angle = max_angle_;
+      end_angle = min_angle_ + 360;
+    } else {
+      start_angle = min_angle_;
+      end_angle = max_angle_;
+    }
+  } else {
+    start_angle = 0;
+    end_angle = 360;
+  }
+
+  float max_radius = 0.f;
   for (int i = 0; i < circles_count_; ++i) {
     float radius = min_radius_ + (i + (min_radius_ < 1e-6 ? 1 : 0)) * radius_step_;
-    for (int j = -180; j <= 150; ++j) {
+    if (i == circles_count_ - 1) max_radius = radius;
+    // XXX: May have better way, the number of points should not be fixed
+    for (int j = start_angle; j < end_angle; ++j) {
       for (int k = 0; k < 2; ++k) {
         float angle_rad = Ogre::Math::PI * (j + k) / 180.f;
         float x = radius * Ogre::Math::Cos(angle_rad);
@@ -59,22 +77,23 @@ void PolarGrid::draw() {
       }
     }
   }
-  polar_grid_->end();
 
-  // TODO(HuaTsai): boarders
-  // std::shared_ptr<Ogre::ManualObject> b(scene_manager_->createManualObject());
-  // b->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_LIST);
-  // for (auto angle : {-60, -40, -20, 0, 20, 40, 60}) {
-  //   b->position(0, 0, 0);
-  //   float angle_rad = Ogre::Math::PI * angle / 180.f;
-  //   float x = 150.f * Ogre::Math::Cos(angle_rad);
-  //   float y = 150.f * Ogre::Math::Sin(angle_rad);
-  //   b->colour(color_);
-  //   b->position(x, y, 0);
-  // }
-  // b->end();
-  // scene_node_->attachObject(b.get());
-  // polars_.push_back(b);
+  if (sectors_) {
+    float angle_step = static_cast<float>(end_angle - start_angle) / sector_count_;
+    for (int i = 0; i < sector_count_ + 1; ++i) {
+      float angle_rad = Ogre::Math::PI * (start_angle + i * angle_step) / 180.f;
+      float x1 = min_radius_ * Ogre::Math::Cos(angle_rad);
+      float y1 = min_radius_ * Ogre::Math::Sin(angle_rad);
+      float x2 = max_radius * Ogre::Math::Cos(angle_rad);
+      float y2 = max_radius * Ogre::Math::Sin(angle_rad);
+      polar_grid_->position(x1, y1, 0);
+      polar_grid_->colour(color_);
+      polar_grid_->position(x2, y2, 0);
+      polar_grid_->colour(color_);
+    }
+  }
+
+  polar_grid_->end();
 }
 
 void PolarGrid::setPosition(const Ogre::Vector3 &position) { scene_node_->setPosition(position); }
@@ -109,6 +128,31 @@ void PolarGrid::setRadiusStep(float radius_step) {
 
 void PolarGrid::setCirclesCount(int circles_count) {
   circles_count_ = circles_count;
+  draw();
+}
+
+void PolarGrid::setSectors(bool sectors) {
+  sectors_ = sectors;
+  draw();
+}
+
+void PolarGrid::setMinAngle(int min_angle) {
+  min_angle_ = min_angle;
+  draw();
+}
+
+void PolarGrid::setMaxAngle(int max_angle) {
+  max_angle_ = max_angle;
+  draw();
+}
+
+void PolarGrid::setSectorCount(int sector_count) {
+  sector_count_ = sector_count;
+  draw();
+}
+
+void PolarGrid::setInvert(bool invert) {
+  invert_ = invert;
   draw();
 }
 

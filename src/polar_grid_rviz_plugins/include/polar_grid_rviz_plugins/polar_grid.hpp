@@ -48,6 +48,11 @@ class PolarGrid : public rviz_rendering::Object {
   void setMinRadius(float min_radius);
   void setRadiusStep(float radius_step);
   void setCirclesCount(int circles_count);
+  void setSectors(bool sectors);
+  void setMinAngle(int min_angle);
+  void setMaxAngle(int max_angle);
+  void setSectorCount(int sector_count);
+  void setInvert(bool invert);
 
   std::shared_ptr<Ogre::SceneNode> getSceneNode();
 
@@ -59,6 +64,11 @@ class PolarGrid : public rviz_rendering::Object {
   float min_radius_;
   float radius_step_;
   int circles_count_;
+  bool sectors_;
+  float min_angle_;
+  float max_angle_;
+  int sector_count_;
+  bool invert_;
 };
 
 }  // namespace polar_grid_rviz_plugins
