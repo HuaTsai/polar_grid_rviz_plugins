@@ -60,7 +60,32 @@ PolarGridDisplay::PolarGridDisplay() {
   plane_property_->addOption("XZ", static_cast<int>(Plane::kXZ));
   plane_property_->addOption("YZ", static_cast<int>(Plane::kYZ));
 
-  // TODO(HuaTsai): boarder (ang1, ang2), invert, origin offset, show texts and their color/size
+  sectors_property_ = std::make_unique<rviz_common::properties::BoolProperty>(
+      "Sectors", false, "Sectors properties.", this, SLOT(updateSectors()));
+  sectors_property_->setDisableChildrenIfFalse(true);
+
+  min_angle_property_ = std::make_unique<rviz_common::properties::IntProperty>(
+      "Minimum Angle", -180.f, "The minimum angle of the sectors.", sectors_property_.get(),
+      SLOT(updateMinAngle()), this);
+  min_angle_property_->setMin(-180.f);
+  min_angle_property_->setMax(180.f);
+
+  max_angle_property_ = std::make_unique<rviz_common::properties::IntProperty>(
+      "Maximum Angle", 180.f, "The maximum angle of the sectors.", sectors_property_.get(),
+      SLOT(updateMaxAngle()), this);
+  max_angle_property_->setMin(-180.f);
+  max_angle_property_->setMax(180.f);
+
+  sector_count_property_ = std::make_unique<rviz_common::properties::IntProperty>(
+      "Sector Count", 8, "The number of sectors to draw.", sectors_property_.get(),
+      SLOT(updateSectorCount()), this);
+  sector_count_property_->setMin(1);
+
+  invert_property_ = std::make_unique<rviz_common::properties::BoolProperty>(
+      "Invert", false, "Invert the sector region.", sectors_property_.get(), SLOT(updateInvert()),
+      this);
+
+  // TODO(HuaTsai): origin offset, linewidth, show texts and their color/size
 }
 
 void PolarGridDisplay::onInitialize() {
@@ -75,6 +100,11 @@ void PolarGridDisplay::onInitialize() {
   updateRadiusStep();
   updateCirclesCount();
   updatePlane();
+  updateSectors();
+  updateMinAngle();
+  updateMaxAngle();
+  updateSectorCount();
+  updateInvert();
 }
 
 void PolarGridDisplay::update(float /* dt */, float /* ros_dt */) {
@@ -101,19 +131,22 @@ void PolarGridDisplay::updateColor() {
   Ogre::ColourValue color = color_property_->getOgreColor();
   color.a = alpha_property_->getFloat();
   polar_grid_->setColor(color.r, color.g, color.b, color.a);
-  // context_->queueRender();  // FIXME: check if this is necessary
+  context_->queueRender();
 }
 
 void PolarGridDisplay::updateMinRadius() {
   polar_grid_->setMinRadius(min_radius_property_->getFloat());
+  context_->queueRender();
 }
 
 void PolarGridDisplay::updateRadiusStep() {
   polar_grid_->setRadiusStep(radius_step_property_->getFloat());
+  context_->queueRender();
 }
 
 void PolarGridDisplay::updateCirclesCount() {
   polar_grid_->setCirclesCount(circles_count_property_->getInt());
+  context_->queueRender();
 }
 
 void PolarGridDisplay::updatePlane() {
@@ -129,6 +162,42 @@ void PolarGridDisplay::updatePlane() {
     RVIZ_COMMON_LOG_ERROR_STREAM("Invalid plane index " << plane_property_->getOptionInt());
   }
   polar_grid_->getSceneNode()->setOrientation(q);
+  context_->queueRender();
+}
+
+void PolarGridDisplay::updateSectors() {
+  polar_grid_->setSectors(sectors_property_->getBool());
+  context_->queueRender();
+}
+
+void PolarGridDisplay::updateMinAngle() {
+  int angle = min_angle_property_->getInt();
+  if (angle < max_angle_property_->getInt()) {
+    polar_grid_->setMinAngle(angle);
+  } else {
+    RVIZ_COMMON_LOG_ERROR_STREAM("Minimum angle must be less than maximum angle.");
+  }
+  context_->queueRender();
+}
+
+void PolarGridDisplay::updateMaxAngle() {
+  int angle = max_angle_property_->getInt();
+  if (angle > min_angle_property_->getInt()) {
+    polar_grid_->setMaxAngle(angle);
+  } else {
+    RVIZ_COMMON_LOG_ERROR_STREAM("Maximum angle must be greater than minimum angle.");
+  }
+  context_->queueRender();
+}
+
+void PolarGridDisplay::updateSectorCount() {
+  polar_grid_->setSectorCount(sector_count_property_->getInt());
+  context_->queueRender();
+}
+
+void PolarGridDisplay::updateInvert() {
+  polar_grid_->setInvert(invert_property_->getBool());
+  context_->queueRender();
 }
 
 }  // namespace polar_grid_rviz_plugins

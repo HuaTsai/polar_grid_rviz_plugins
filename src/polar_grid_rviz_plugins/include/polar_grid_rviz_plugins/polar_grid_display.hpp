@@ -51,6 +51,11 @@ class PolarGridDisplay : public rviz_common::Display {
   void updateRadiusStep();
   void updateCirclesCount();
   void updatePlane();
+  void updateSectors();
+  void updateMinAngle();
+  void updateMaxAngle();
+  void updateSectorCount();
+  void updateInvert();
 
  protected:
   std::unique_ptr<PolarGrid> polar_grid_;
@@ -61,6 +66,11 @@ class PolarGridDisplay : public rviz_common::Display {
   std::unique_ptr<rviz_common::properties::FloatProperty> radius_step_property_;
   std::unique_ptr<rviz_common::properties::IntProperty> circles_count_property_;
   std::unique_ptr<rviz_common::properties::EnumProperty> plane_property_;
+  std::unique_ptr<rviz_common::properties::BoolProperty> sectors_property_;
+  std::unique_ptr<rviz_common::properties::IntProperty> min_angle_property_;
+  std::unique_ptr<rviz_common::properties::IntProperty> max_angle_property_;
+  std::unique_ptr<rviz_common::properties::IntProperty> sector_count_property_;
+  std::unique_ptr<rviz_common::properties::BoolProperty> invert_property_;
 };
 
 }  // namespace polar_grid_rviz_plugins
