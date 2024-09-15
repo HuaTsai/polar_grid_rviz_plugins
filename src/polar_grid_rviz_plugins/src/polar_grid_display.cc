@@ -85,7 +85,11 @@ PolarGridDisplay::PolarGridDisplay() {
       "Invert", false, "Invert the sector region.", sectors_property_.get(), SLOT(updateInvert()),
       this);
 
-  // TODO(HuaTsai): origin offset, linewidth, show texts and their color/size
+  offset_property_ = std::make_unique<rviz_common::properties::VectorProperty>(
+      "Offset", Ogre::Vector3::ZERO, "The origin of the polar grid in meters.", this,
+      SLOT(updateOffset()));
+
+  // TODO(HuaTsai): show texts and their color/size, pending
 }
 
 void PolarGridDisplay::onInitialize() {
@@ -197,6 +201,11 @@ void PolarGridDisplay::updateSectorCount() {
 
 void PolarGridDisplay::updateInvert() {
   polar_grid_->setInvert(invert_property_->getBool());
+  context_->queueRender();
+}
+
+void PolarGridDisplay::updateOffset() {
+  polar_grid_->getSceneNode()->setPosition(offset_property_->getVector());
   context_->queueRender();
 }
 
