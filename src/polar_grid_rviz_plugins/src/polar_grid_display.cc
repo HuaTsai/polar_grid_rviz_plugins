@@ -131,19 +131,22 @@ void PolarGridDisplay::updateColor() {
   Ogre::ColourValue color = color_property_->getOgreColor();
   color.a = alpha_property_->getFloat();
   polar_grid_->setColor(color.r, color.g, color.b, color.a);
-  // context_->queueRender();  // FIXME: check if this is necessary
+  context_->queueRender();
 }
 
 void PolarGridDisplay::updateMinRadius() {
   polar_grid_->setMinRadius(min_radius_property_->getFloat());
+  context_->queueRender();
 }
 
 void PolarGridDisplay::updateRadiusStep() {
   polar_grid_->setRadiusStep(radius_step_property_->getFloat());
+  context_->queueRender();
 }
 
 void PolarGridDisplay::updateCirclesCount() {
   polar_grid_->setCirclesCount(circles_count_property_->getInt());
+  context_->queueRender();
 }
 
 void PolarGridDisplay::updatePlane() {
@@ -159,9 +162,13 @@ void PolarGridDisplay::updatePlane() {
     RVIZ_COMMON_LOG_ERROR_STREAM("Invalid plane index " << plane_property_->getOptionInt());
   }
   polar_grid_->getSceneNode()->setOrientation(q);
+  context_->queueRender();
 }
 
-void PolarGridDisplay::updateSectors() { polar_grid_->setSectors(sectors_property_->getBool()); }
+void PolarGridDisplay::updateSectors() {
+  polar_grid_->setSectors(sectors_property_->getBool());
+  context_->queueRender();
+}
 
 void PolarGridDisplay::updateMinAngle() {
   int angle = min_angle_property_->getInt();
@@ -170,6 +177,7 @@ void PolarGridDisplay::updateMinAngle() {
   } else {
     RVIZ_COMMON_LOG_ERROR_STREAM("Minimum angle must be less than maximum angle.");
   }
+  context_->queueRender();
 }
 
 void PolarGridDisplay::updateMaxAngle() {
@@ -179,13 +187,18 @@ void PolarGridDisplay::updateMaxAngle() {
   } else {
     RVIZ_COMMON_LOG_ERROR_STREAM("Maximum angle must be greater than minimum angle.");
   }
+  context_->queueRender();
 }
 
 void PolarGridDisplay::updateSectorCount() {
   polar_grid_->setSectorCount(sector_count_property_->getInt());
+  context_->queueRender();
 }
 
-void PolarGridDisplay::updateInvert() { polar_grid_->setInvert(invert_property_->getBool()); }
+void PolarGridDisplay::updateInvert() {
+  polar_grid_->setInvert(invert_property_->getBool());
+  context_->queueRender();
+}
 
 }  // namespace polar_grid_rviz_plugins
 
