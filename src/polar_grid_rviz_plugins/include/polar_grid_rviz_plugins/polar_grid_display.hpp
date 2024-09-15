@@ -30,6 +30,7 @@
 #include <rviz_common/properties/float_property.hpp>
 #include <rviz_common/properties/int_property.hpp>
 #include <rviz_common/properties/tf_frame_property.hpp>
+#include <rviz_common/properties/vector_property.hpp>
 
 namespace polar_grid_rviz_plugins {
 
@@ -56,6 +57,7 @@ class PolarGridDisplay : public rviz_common::Display {
   void updateMaxAngle();
   void updateSectorCount();
   void updateInvert();
+  void updateOffset();
 
  protected:
   std::unique_ptr<PolarGrid> polar_grid_;
@@ -71,6 +73,7 @@ class PolarGridDisplay : public rviz_common::Display {
   std::unique_ptr<rviz_common::properties::IntProperty> max_angle_property_;
   std::unique_ptr<rviz_common::properties::IntProperty> sector_count_property_;
   std::unique_ptr<rviz_common::properties::BoolProperty> invert_property_;
+  std::unique_ptr<rviz_common::properties::VectorProperty> offset_property_;
 };
 
 }  // namespace polar_grid_rviz_plugins

@@ -48,18 +48,18 @@ void PolarGrid::draw() {
   polar_grid_->clear();
   polar_grid_->begin(material_->getName(), Ogre::RenderOperation::OT_LINE_LIST, "rviz_rendering");
 
-  int start_angle = 0, end_angle = 0;
+  int start_angle = 0, end_angle = 0, two_pi = 360;
   if (sectors_) {
     if (invert_) {
       start_angle = max_angle_;
-      end_angle = min_angle_ + 360;
+      end_angle = min_angle_ + two_pi;
     } else {
       start_angle = min_angle_;
       end_angle = max_angle_;
     }
   } else {
     start_angle = 0;
-    end_angle = 360;
+    end_angle = two_pi;
   }
 
   float max_radius = 0.f;
@@ -78,10 +78,11 @@ void PolarGrid::draw() {
     }
   }
 
-  if (sectors_) {
+  if (sectors_ && start_angle != end_angle) {
     float angle_step = static_cast<float>(end_angle - start_angle) / sector_count_;
     for (int i = 0; i < sector_count_ + 1; ++i) {
       float angle_rad = Ogre::Math::PI * (start_angle + i * angle_step) / 180.f;
+      if (i == sector_count_ && start_angle + two_pi == end_angle) continue;
       float x1 = min_radius_ * Ogre::Math::Cos(angle_rad);
       float y1 = min_radius_ * Ogre::Math::Sin(angle_rad);
       float x2 = max_radius * Ogre::Math::Cos(angle_rad);
