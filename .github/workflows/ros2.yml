@@ -1,0 +1,47 @@
+name: humble | iron | jazzy | rolling
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ros_distribution:
+          - humble
+          - iron
+          - jazzy
+          - rolling
+
+        include:
+          - docker_image: ubuntu:jammy
+            ros_distribution: humble
+
+          - docker_image: ubuntu:jammy
+            ros_distribution: iron
+
+          - docker_image: ubuntu:noble
+            ros_distribution: jazzy
+
+          - docker_image: ubuntu:noble
+            ros_distribution: rolling
+
+    container:
+      image: ${{ matrix.docker_image }}
+
+    steps:
+      - name: setup
+        uses: ros-tooling/setup-ros@v0.7
+        with:
+          required-ros-distributions: ${{ matrix.ros_distribution }}
+      - name: build and test
+        uses: ros-tooling/action-ros-ci@v0.3
+        with:
+          package-name: polar_grid_rviz_plugins
+          target-ros2-distro: ${{ matrix.ros_distribution }}

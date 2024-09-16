@@ -32,12 +32,15 @@
 #include <rviz_common/properties/tf_frame_property.hpp>
 #include <rviz_common/properties/vector_property.hpp>
 
-namespace polar_grid_rviz_plugins {
+namespace polar_grid_rviz_plugins
+{
 
 class PolarGridDisplay : public rviz_common::Display {
   Q_OBJECT
- public:
-  enum class Plane {
+
+public:
+  enum class Plane
+  {
     kXY,
     kXZ,
     kYZ,
@@ -46,7 +49,7 @@ class PolarGridDisplay : public rviz_common::Display {
   void onInitialize() override;
   void update(float dt, float ros_dt) override;
 
- private Q_SLOTS:
+private Q_SLOTS:
   void updateColor();
   void updateMinRadius();
   void updateRadiusStep();
@@ -59,7 +62,7 @@ class PolarGridDisplay : public rviz_common::Display {
   void updateInvert();
   void updateOffset();
 
- protected:
+protected:
   std::unique_ptr<PolarGrid> polar_grid_;
   std::unique_ptr<rviz_common::properties::TfFrameProperty> frame_property_;
   std::unique_ptr<rviz_common::properties::ColorProperty> color_property_;
