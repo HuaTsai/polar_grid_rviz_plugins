@@ -27,7 +27,7 @@
 
 namespace polar_grid_rviz_plugins {
 
-  PolarGrid::PolarGrid(Ogre::SceneManager *scene_manager, Ogre::SceneNode *parent_node)
+  PolarGrid::PolarGrid(Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node)
   : rviz_rendering::Object(scene_manager)
   {
     static int count = 0;

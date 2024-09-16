@@ -32,9 +32,10 @@
 namespace polar_grid_rviz_plugins
 {
 
-class PolarGrid : public rviz_rendering::Object {
+class PolarGrid : public rviz_rendering::Object
+{
 public:
-  explicit PolarGrid(Ogre::SceneManager *scene_manager, Ogre::SceneNode *parent_node);
+  explicit PolarGrid(Ogre::SceneManager * scene_manager, Ogre::SceneNode * parent_node);
 
   void draw();
 

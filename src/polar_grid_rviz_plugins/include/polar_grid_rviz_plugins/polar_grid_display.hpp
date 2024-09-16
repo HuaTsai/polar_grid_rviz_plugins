@@ -35,7 +35,8 @@
 namespace polar_grid_rviz_plugins
 {
 
-class PolarGridDisplay : public rviz_common::Display {
+class PolarGridDisplay : public rviz_common::Display
+{
   Q_OBJECT
 
 public:
