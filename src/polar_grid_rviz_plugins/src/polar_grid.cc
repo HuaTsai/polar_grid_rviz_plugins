@@ -43,6 +43,16 @@ namespace polar_grid_rviz_plugins {
     scene_node_->attachObject(polar_grid_.get());
 
     material_ = rviz_rendering::MaterialManager::createMaterialWithNoLighting(name + "Material");
+
+    color_ = Ogre::ColourValue::White;
+    min_radius_ = 0.f;
+    radius_step_ = 1.f;
+    circles_count_ = 5;
+    sectors_ = false;
+    min_angle_ = -180.f;
+    max_angle_ = 180.f;
+    sector_count_ = 8;
+    invert_ = false;
   }
 
   void PolarGrid::draw()
